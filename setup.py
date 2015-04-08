@@ -18,6 +18,7 @@ version = '0.1dev'
 install_requires = [
     'Kotti>=0.10b1',
     'pyramid_es',
+    'pyramid_zcml',
 ]
 
 
@@ -48,9 +49,6 @@ setup(
     tests_require=[],
     dependency_links=[],
     entry_points={
-        'fanstatic.libraries': [
-            'kotti_es = kotti_es.fanstatic:library',
-        ],
     },
     extras_require={},
 )

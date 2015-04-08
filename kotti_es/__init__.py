@@ -4,6 +4,7 @@
 Created on 2015-04-08
 :author: Davide Moro (davide.moro@gmail.com)
 """
+from .events import wire_sqlalchemy
 
 
 def kotti_configure(settings):
@@ -30,5 +31,9 @@ def includeme(config):
     """
 
     config.include('pyramid_es')
+    config.include('pyramid_zcml')
+    config.load_zcml('configure.zcml')
+
+    wire_sqlalchemy()
 
     config.scan(__name__)

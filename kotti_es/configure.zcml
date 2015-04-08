@@ -1,0 +1,15 @@
+<configure
+     xmlns="http://pylonshq.com/pyramid"
+     xmlns:zope="http://namespaces.zope.org/zope"
+     xmlns:zcml="http://namespaces.zope.org/zcml"
+     >
+
+ <include package="zope.component" file="meta.zcml" />
+ <zope:adapter
+   factory=".elastic.ElasticContent"
+  />
+ <zope:adapter
+   factory=".elastic.ElasticDocument"
+  />
+
+</configure>
