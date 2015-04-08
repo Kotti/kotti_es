@@ -1,6 +1,11 @@
 import sqlalchemy
 from sqlalchemy.orm import mapper
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (
+    get_current_request,
+    get_current_registry,
+    )
+
+from pyramid_es import get_client
 
 from kotti.events import (
     notify,
@@ -9,9 +14,10 @@ from kotti.events import (
     ObjectUpdate,
     subscribe,
     )
-from kotti.interfaces import (
-    IContent,
+from kotti.resources import (
+    Content,
     )
+from .interfaces import IElastic
 
 _WIRED_SQLALCHEMY = False
 
@@ -35,19 +41,23 @@ def wire_sqlalchemy():  # pragma: no cover
     sqlalchemy.event.listen(mapper, 'after_insert', _after_insert)
 
 
-@subscribe(ObjectAfterInsert, IContent)
+@subscribe(ObjectAfterInsert, Content)
 def object_added(event):
-    import pdb; pdb.set_trace()
-    pass
+    request = event.request
+    registry = get_current_registry()
+    #registry = request.registry
+    wrapped = registry.queryAdapter(event.object, IElastic)
+    es_client = get_client(request)
+    es_client.index_object(wrapped)
 
 
-@subscribe(ObjectUpdate, IContent)
+@subscribe(ObjectUpdate, Content)
 def object_updated(event):
     import pdb; pdb.set_trace()
     pass
 
 
-@subscribe(ObjectDelete, IContent)
+@subscribe(ObjectDelete, Content)
 def object_deleted(event):
     import pdb; pdb.set_trace()
     pass

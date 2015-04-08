@@ -5,10 +5,13 @@ from zope.component import (
     adapts,
     )
 from kotti.interfaces import (
-    IDocument,
     IContent,
     )
-from pyramid_es.mixin import ESMapping, ESString
+from pyramid_es.mixin import (
+    ESMapping,
+    ESString,
+    ElasticParent,
+    )
 from .interfaces import IElastic
 
 
@@ -28,7 +31,10 @@ class ElasticBase(object):
         """
         Apply the class ES mapping to the current context
         """
-        return self.elastic_mapping()(self.context)
+        return self.elastic_mapping()(self)
+
+    __elastic_parent__ = None
+    elastic_parent = ElasticParent()
 
 
 class ElasticContent(ElasticBase):
@@ -40,22 +46,7 @@ class ElasticContent(ElasticBase):
         """
         Return an ES mapping.
         """
-        return ESMapping(
-            attr='context',
-            analyzer='content',
-            properties=ESMapping(
-                ESString('description', boost=5.0)))
-
-
-class ElasticDocument(ElasticBase):
-    implements(IElastic)
-    adapts(IDocument)
-
-    @classmethod
-    def elastic_mapping(cls):
-        """
-        Return an ES mapping.
-        """
+        # TODO: return all mappings dynamically
         return ESMapping(
             attr='context',
             analyzer='content',

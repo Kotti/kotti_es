@@ -8,8 +8,5 @@
  <zope:adapter
    factory=".elastic.ElasticContent"
   />
- <zope:adapter
-   factory=".elastic.ElasticDocument"
-  />
 
 </configure>
