@@ -42,22 +42,13 @@ def wire_sqlalchemy():  # pragma: no cover
 
 
 @subscribe(ObjectAfterInsert, Content)
+@subscribe(ObjectUpdate, Content)
+@subscribe(ObjectDelete, Content)
 def object_added(event):
     request = event.request
     registry = get_current_registry()
-    #registry = request.registry
     wrapped = registry.queryAdapter(event.object, IElastic)
     es_client = get_client(request)
-    es_client.index_object(wrapped)
-
-
-@subscribe(ObjectUpdate, Content)
-def object_updated(event):
-    import pdb; pdb.set_trace()
-    pass
-
-
-@subscribe(ObjectDelete, Content)
-def object_deleted(event):
-    import pdb; pdb.set_trace()
-    pass
+    # TODO: without immediate=True if won't work due to a transaction
+    # error. To be fixed ASAP
+    es_client.index_object(wrapped, immediate=True)
