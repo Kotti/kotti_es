@@ -41,14 +41,29 @@ def wire_sqlalchemy():  # pragma: no cover
     sqlalchemy.event.listen(mapper, 'after_insert', _after_insert)
 
 
+def _get_wrapper_from_event(event):
+    registry = get_current_registry()
+    wrapper = registry.queryAdapter(event.object, IElastic)
+    return wrapper
+
+
+def _get_client_from_event(event):
+    request = event.request
+    return get_client(request)
+
+
 @subscribe(ObjectAfterInsert, Content)
 @subscribe(ObjectUpdate, Content)
-@subscribe(ObjectDelete, Content)
-def object_added(event):
-    request = event.request
-    registry = get_current_registry()
-    wrapped = registry.queryAdapter(event.object, IElastic)
-    es_client = get_client(request)
+def object_updated(event):
+    wrapper = _get_wrapper_from_event(event)
+    es_client = _get_client_from_event(event)
     # TODO: without immediate=True if won't work due to a transaction
     # error. To be fixed ASAP
-    es_client.index_object(wrapped, immediate=True)
+    es_client.index_object(wrapper, immediate=True)
+
+
+@subscribe(ObjectDelete, Content)
+def object_deleted(event):
+    wrapper = _get_wrapper_from_event(event)
+    es_client = _get_client_from_event(event)
+    es_client.delete_object(wrapper, immediate=True)
