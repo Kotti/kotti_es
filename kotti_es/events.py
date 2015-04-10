@@ -5,31 +5,42 @@ from pyramid.threadlocal import (
     get_current_registry,
     )
 
+from elasticsearch.exceptions import NotFoundError
 from pyramid_es import get_client
 
-from kotti.events import (
-    notify,
-    ObjectEvent,
-    ObjectDelete,
-    ObjectUpdate,
-    subscribe,
-    )
-from kotti.resources import (
-    Content,
-    )
+from kotti import DBSession
+from kotti.interfaces import IContent
 from .interfaces import IElastic
 
 _WIRED_SQLALCHEMY = False
 
 
-class ObjectAfterInsert(ObjectEvent):
-    """ Custom event after insert notified when
-        the id is already available
-    """
-
-
 def _after_insert(mapper, connection, target):
-    notify(ObjectAfterInsert(target, get_current_request()))
+    request = get_current_request()
+    if IContent.providedBy(target):
+        request._index_list = [(target, 1)]
+
+
+def _after_delete(mapper, connection, target):
+    request = get_current_request()
+    if IContent.providedBy(target):
+        request._index_list = [(target, -1)]
+
+
+def _after_commit(session):
+    request = get_current_request()
+    index_list = getattr(request, '_index_list', [])
+    registry = get_current_registry()
+    es_client = get_client(request)
+    for target, operation in index_list:
+        wrapper = registry.queryAdapter(target, IElastic)
+        if operation == 1:
+            es_client.index_object(wrapper, immediate=True)
+        else:
+            try:
+                es_client.delete_object(wrapper, immediate=True)
+            except NotFoundError:
+                pass
 
 
 def wire_sqlalchemy():  # pragma: no cover
@@ -39,31 +50,6 @@ def wire_sqlalchemy():  # pragma: no cover
     else:
         _WIRED_SQLALCHEMY = True
     sqlalchemy.event.listen(mapper, 'after_insert', _after_insert)
-
-
-def _get_wrapper_from_event(event):
-    registry = get_current_registry()
-    wrapper = registry.queryAdapter(event.object, IElastic)
-    return wrapper
-
-
-def _get_client_from_event(event):
-    request = event.request
-    return get_client(request)
-
-
-@subscribe(ObjectAfterInsert, Content)
-@subscribe(ObjectUpdate, Content)
-def object_updated(event):
-    wrapper = _get_wrapper_from_event(event)
-    es_client = _get_client_from_event(event)
-    # TODO: without immediate=True if won't work due to a transaction
-    # error. To be fixed ASAP
-    es_client.index_object(wrapper, immediate=True)
-
-
-@subscribe(ObjectDelete, Content)
-def object_deleted(event):
-    wrapper = _get_wrapper_from_event(event)
-    es_client = _get_client_from_event(event)
-    es_client.delete_object(wrapper, immediate=True)
+    sqlalchemy.event.listen(mapper, 'after_update', _after_insert)
+    sqlalchemy.event.listen(mapper, 'after_delete', _after_delete)
+    sqlalchemy.event.listen(DBSession, 'after_commit', _after_commit)
