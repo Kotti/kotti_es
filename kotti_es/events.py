@@ -27,7 +27,10 @@ def _after_insert(mapper, connection, target):
 def _after_delete(mapper, connection, target):
     request = get_current_request()
     if IContent.providedBy(target):
-        request._index_list = [(target, DELETE_CODE)]
+        if not hasattr(request, '_index_list'):
+            request._index_list = [(target, DELETE_CODE)]
+        else:
+            request._index_list.append((target, DELETE_CODE))
 
 
 def _after_commit(session):
