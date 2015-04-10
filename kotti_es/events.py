@@ -14,17 +14,20 @@ from .interfaces import IElastic
 
 _WIRED_SQLALCHEMY = False
 
+INSERT_CODE = 1
+DELETE_CODE = -1
+
 
 def _after_insert(mapper, connection, target):
     request = get_current_request()
     if IContent.providedBy(target):
-        request._index_list = [(target, 1)]
+        request._index_list = [(target, INSERT_CODE)]
 
 
 def _after_delete(mapper, connection, target):
     request = get_current_request()
     if IContent.providedBy(target):
-        request._index_list = [(target, -1)]
+        request._index_list = [(target, DELETE_CODE)]
 
 
 def _after_commit(session):
@@ -34,9 +37,9 @@ def _after_commit(session):
     es_client = get_client(request)
     for target, operation in index_list:
         wrapper = registry.queryAdapter(target, IElastic)
-        if operation == 1:
+        if operation == INSERT_CODE:
             es_client.index_object(wrapper, immediate=True)
-        else:
+        elif operation == DELETE_CODE:
             try:
                 es_client.delete_object(wrapper, immediate=True)
             except NotFoundError:
