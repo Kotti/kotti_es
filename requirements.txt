@@ -46,7 +46,7 @@ pyramid_chameleon==0.3
 pyramid_debugtoolbar==2.3
 pyramid_deform==0.2
 # pyramid_es==0.3.1
--e git+https://github.com/truelab/pyramid_es.git@feature-wrapper#egg=kotti_multilingual
+-e git+https://github.com/truelab/pyramid_es.git@feature-wrapper#egg=pyramid_es
 pyramid_mailer==0.14
 pyramid_mako==1.0.2
 pyramid_tm==0.10
