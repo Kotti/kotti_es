@@ -10,7 +10,7 @@ from pyramid_es import get_client
 
 from kotti import DBSession
 from kotti.interfaces import IContent
-from .interfaces import IElastic
+from pyramid_es.interfaces import IElastic
 
 _WIRED_SQLALCHEMY = False
 
