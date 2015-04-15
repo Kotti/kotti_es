@@ -1,3 +1,4 @@
+from zope.interface import implements
 from zope.component import (
     adapts,
     )
@@ -9,9 +10,11 @@ from pyramid_es.mixin import (
     ESString,
     )
 from pyramid_es.elastic import ElasticBase
+from pyramid_es.interfaces import IElastic
 
 
 class ElasticContent(ElasticBase):
+    implements(IElastic)
     adapts(IContent)
 
     @classmethod
