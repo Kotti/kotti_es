@@ -2,7 +2,6 @@ import sqlalchemy
 from sqlalchemy.orm import mapper
 from pyramid.threadlocal import (
     get_current_request,
-    get_current_registry,
     )
 
 from elasticsearch.exceptions import NotFoundError
@@ -10,7 +9,6 @@ from pyramid_es import get_client
 
 from kotti import DBSession
 from kotti.interfaces import IContent
-from pyramid_es.interfaces import IElastic
 
 _WIRED_SQLALCHEMY = False
 
@@ -36,15 +34,13 @@ def _after_delete(mapper, connection, target):
 def _after_commit(session):
     request = get_current_request()
     index_list = getattr(request, '_index_list', [])
-    registry = get_current_registry()
     es_client = get_client(request)
     for target, operation in index_list:
-        wrapper = registry.queryAdapter(target, IElastic)
         if operation == INSERT_CODE:
-            es_client.index_object(wrapper, immediate=True)
+            es_client.index_object(target, immediate=True)
         elif operation == DELETE_CODE:
             try:
-                es_client.delete_object(wrapper, immediate=True)
+                es_client.delete_object(target, immediate=True)
             except NotFoundError:
                 pass
 
