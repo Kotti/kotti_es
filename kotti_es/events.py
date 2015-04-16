@@ -9,7 +9,10 @@ from pyramid_es import get_client
 
 from kotti import DBSession
 
-from .util import is_blacklisted
+from .util import (
+    is_blacklisted,
+    get_request,
+    )
 
 _WIRED_SQLALCHEMY = False
 
@@ -19,14 +22,14 @@ DELETE_CODE = -1
 
 def _after_insert_update(mapper, connection, target):
     if not is_blacklisted(target):
-        request = get_current_request()
+        request = get_request(target)
         if request:
             request._index_list = [(target, INSERT_CODE)]
 
 
 def _after_delete(mapper, connection, target):
     if not is_blacklisted(target):
-        request = get_current_request()
+        request = get_request(target)
         if request:
             if not hasattr(request, '_index_list'):
                 request._index_list = [(target, DELETE_CODE)]
