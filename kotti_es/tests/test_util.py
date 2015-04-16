@@ -85,3 +85,22 @@ class TestUtil(TestCase):
             settings = {'kotti_es.blacklist': ['pippo']}
             mock_registry.return_value = mock.Mock(settings=settings)
             self.assertTrue(is_blacklisted(target))
+
+    def test_is_blacklisted_icontent_request(self):
+        from kotti_es.util import is_blacklisted
+        from kotti.interfaces import IContent
+        from kotti.resources import TypeInfo
+        from zope.interface import implements
+
+        class Target:
+            implements(IContent)
+            type_info = TypeInfo(name='pippo')
+
+            def __init__(self, request):
+                self.request = request
+        import mock
+        settings = {'kotti_es.blacklist': []}
+        request = mock.Mock(registry=mock.Mock(settings=settings))
+        target = Target(request)
+
+        self.assertFalse(is_blacklisted(target))
