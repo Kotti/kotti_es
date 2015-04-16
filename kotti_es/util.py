@@ -22,8 +22,8 @@ def is_blacklisted(target):
         * type name not listed in ``kotti_es.blacklist``
     """
     if IContent.providedBy(target):
-        request = get_request()
-        registry = getattr(request, 'registry')
+        request = get_request(target)
+        registry = getattr(request, 'registry', None)
         if registry is None:
             registry = get_current_registry()
         settings = registry.settings
@@ -38,7 +38,7 @@ def get_request(target):
         if will returned the result of the get_current_request
         function.
     """
-    request = getattr(target, 'request')
+    request = getattr(target, 'request', None)
     if request is None:
         request = get_current_request()
     return request
