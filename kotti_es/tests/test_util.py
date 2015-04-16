@@ -43,3 +43,11 @@ class TestUtil(TestCase):
             mock_request.return_value = request
             result_request = get_request(target)
         self.assertEquals(request, result_request)
+
+    def test_is_blacklisted_no_icontent(self):
+        from kotti_es.util import is_blacklisted
+
+        class Target:
+            pass
+        target = Target()
+        self.assertTrue(is_blacklisted(target))
