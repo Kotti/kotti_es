@@ -38,7 +38,7 @@ def get_request(target):
         if will returned the result of the get_current_request
         function.
     """
-    request = getattr(target.request)
+    request = getattr(target, 'request')
     if request is None:
         request = get_current_request()
     return request
