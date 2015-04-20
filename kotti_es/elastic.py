@@ -2,6 +2,7 @@ from zope.interface import implements
 from zope.component import (
     adapts,
     )
+from pyramid.traversal import resource_path
 from kotti.interfaces import (
     IContent,
     )
@@ -46,6 +47,8 @@ class BaseElasticKottiContent(ElasticBase):
                     ESString('title', attr='_title'),
                     ESString('description', attr='_description'),
                     ESString('body', attr='_body', filter=html_to_text),
+                    ESField('path', attr='_path'),
+                    ESField('name', attr='_name'),
                     ))
 
     def elastic_document_type(self):
@@ -77,3 +80,11 @@ class BaseElasticKottiContent(ElasticBase):
     def _body(self):
         body = getattr(self.context, 'body', '')
         return body
+
+    @property
+    def _path(self):
+        return resource_path(self.context)
+
+    @property
+    def _name(self):
+        return self.context.name
