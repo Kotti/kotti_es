@@ -6,6 +6,7 @@ from pyramid.threadlocal import (
     get_current_request,
     get_current_registry,
     )
+from pyramid_es import get_client
 from kotti.interfaces import IContent
 
 
@@ -57,3 +58,14 @@ def html_to_text(value, cleaner=_cleaner):
     cleaned = cleaner.clean_html(value)
     document = document_fromstring(cleaned)
     return document.text_content()
+
+
+def es_search_content(search_term, request=None):
+    """ ES search content """
+    # quick and dirty implementation, to be refactored and tested!
+    if not request:
+        request = get_current_request()
+    client = get_client(request)
+    results = client.es.search(client.index, q=search_term)['hits']['hits']
+    # TODO: index permission principals/localroles/ACL
+    return results
