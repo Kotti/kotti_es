@@ -1,3 +1,6 @@
+from lxml.html import document_fromstring
+from lxml.html.clean import Cleaner
+
 from pyramid.settings import aslist
 from pyramid.threadlocal import (
     get_current_request,
@@ -42,3 +45,15 @@ def get_request(target):
     if request is None:
         request = get_current_request()
     return request
+
+
+_cleaner = Cleaner()
+_cleaner.javascript = True
+_cleaner.style = True
+
+
+def html_to_text(value, cleaner=_cleaner):
+    """ Returns cleaned html """
+    cleaned = cleaner.clean_html(value)
+    document = document_fromstring(cleaned)
+    return document.text_content()

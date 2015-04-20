@@ -12,6 +12,7 @@ from pyramid_es.mixin import (
     )
 from pyramid_es.elastic import ElasticBase
 from pyramid_es.interfaces import IElastic
+from .util import html_to_text
 
 
 class BaseElasticKottiContent(ElasticBase):
@@ -44,7 +45,7 @@ class BaseElasticKottiContent(ElasticBase):
                     ESField('_id'),
                     ESString('title', attr='_title'),
                     ESString('description', attr='_description'),
-                    ESString('body', attr='_body'),
+                    ESString('body', attr='_body', filter=html_to_text),
                     ))
 
     def elastic_document_type(self):
