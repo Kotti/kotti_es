@@ -104,3 +104,16 @@ class TestUtil(TestCase):
         target = Target(request)
 
         self.assertFalse(is_blacklisted(target))
+
+    def test_html_to_text(self):
+        from kotti_es.util import html_to_text
+        value = ''.join([
+            "<span>Foo</span> Bar <script type='text/javascript'>",
+            "var xyz = 1;</script>",
+            ])
+        filtered = html_to_text(value)
+        self.assertTrue('Foo' in filtered)
+        self.assertTrue('Bar' in filtered)
+        self.assertFalse('span' in filtered)
+        self.assertFalse('script' in filtered)
+        self.assertFalse('xyz' in filtered)
