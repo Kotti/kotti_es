@@ -6,7 +6,7 @@
 
  <include package="zope.component" file="meta.zcml" />
  <zope:adapter
-   factory=".elastic.ElasticContent"
+   factory=".elastic.BaseElasticKottiContent"
   />
 
 </configure>
