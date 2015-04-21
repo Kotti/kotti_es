@@ -98,6 +98,7 @@ class TestDefaultKottiAdapter:
 
         adapter = BaseElasticKottiContent(document)
         assert adapter.elastic_mapping() == 1
+        del document.type_info.elastic_mapping
 
     def test_component_lookup(self, config, root):
         from kotti.resources import Document
