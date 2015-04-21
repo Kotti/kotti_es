@@ -67,3 +67,20 @@ class TestDefaultKottiAdapter:
         assert es_mapping_props['path'].attr == '_path'
         assert es_mapping_props['_id'].attr is None
         assert es_mapping_props['name'].attr == '_name'
+
+    def test_verify_document_default_mapping_attrs_methods(self, root):
+        from kotti.resources import Document
+        from kotti_es.elastic import BaseElasticKottiContent
+        document = Document(title='mytitle',
+                            description='mydescr',
+                            body='<span>hello</span>')
+        root['document'] = document
+        assert root['document'].name == 'document'
+
+        adapter = BaseElasticKottiContent(document)
+
+        assert adapter._title == document.title
+        assert adapter._description == document.description
+        assert adapter._body == document.body
+        assert adapter._path == '/document'
+        assert adapter._name == document.name
