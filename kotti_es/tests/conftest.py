@@ -5,9 +5,9 @@ Created on 2015-04-08
 :author: Davide Moro (davide.moro@gmail.com)
 """
 
-pytest_plugins = "kotti"
-
 from pytest import fixture
+
+pytest_plugins = "kotti"
 
 
 @fixture(scope='session')
