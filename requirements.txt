@@ -1,0 +1,3 @@
+-r https://raw.github.com/Kotti/Kotti/stable/requirements.txt
+-e git+https://github.com/truelab/pyramid_es.git@feature-wrapper#egg=pyramid_es
+lxml==3.4.3
