@@ -15,7 +15,7 @@ def es_client(dummy_request, config):
 
 class TestIndexing:
 
-    def test_insert(self, es_client, root, dummy_request):
+    def test_insert(self, es_client, root, dummy_request, db_session):
         import transaction
         from kotti.resources import Document
         document = Document(title=u'mydoc', description=u'mydescription',)
@@ -30,8 +30,12 @@ class TestIndexing:
         assert _type == 'Document'
         assert results['hits']['hits'][0]['_source']['path'] == '/mydoc'
 
+#        # we have to clean up, because we committed transactions
+#        del root[u'mydoc']
+#        transaction.commit()
+
     def test_insert_searches(self, es_client, root,
-                             dummy_request):
+                             dummy_request, db_session):
         import transaction
         from kotti.resources import Document
         document = Document(title=u'mytitle', description=u'mydescription',
@@ -48,8 +52,12 @@ class TestIndexing:
         assert len(es_client.es.search(q='mydoc')['hits']['hits']) == 1
         assert len(es_client.es.search(q='span')['hits']['hits']) == 0
 
+#        # we have to clean up, because we committed transactions
+#        del root[u'mydoc']
+#        transaction.commit()
+
     def test_insert_delete(self, es_client, root,
-                           dummy_request):
+                           dummy_request, db_session):
         import transaction
         from kotti.resources import Document
         document = Document(title=u'mytitle', description=u'mydescription',
@@ -63,6 +71,6 @@ class TestIndexing:
         assert len(es_client.es.search(q='mytitle')['hits']['hits']) == 1
 
 #        del root[u'mydoc']
-#        transaction.commit()
-#         es_client.flush()
-#        assert len(es_client.es.search(q='title')['hits']['hits']) == 0
+#        # transaction.commit()
+#        es_client.flush()
+#        assert len(es_client.es.search(q='mytitle')['hits']['hits']) == 0
