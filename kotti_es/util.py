@@ -55,9 +55,11 @@ _cleaner.style = True
 
 def html_to_text(value, cleaner=_cleaner):
     """ Returns cleaned html """
-    cleaned = cleaner.clean_html(value)
-    document = document_fromstring(cleaned)
-    return document.text_content()
+    if value:
+        cleaned = cleaner.clean_html(value)
+        document = document_fromstring(cleaned)
+        return document.text_content()
+    return ''
 
 
 def es_search_content(search_term, request=None):
