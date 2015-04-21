@@ -84,6 +84,7 @@ class TestDefaultKottiAdapter:
         assert adapter._body == document.body
         assert adapter._path == '/document'
         assert adapter._name == document.name
+        assert adapter._id == document.id
 
     def test_verify_document_type_info_mapping(self, root):
         from kotti.resources import Document
