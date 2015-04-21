@@ -84,3 +84,16 @@ class TestDefaultKottiAdapter:
         assert adapter._body == document.body
         assert adapter._path == '/document'
         assert adapter._name == document.name
+
+    def test_verify_document_type_info_mapping(self, root):
+        from kotti.resources import Document
+        from kotti_es.elastic import BaseElasticKottiContent
+        document = Document(title='mytitle',
+                            description='mydescr',
+                            body='<span>hello</span>')
+        document.type_info.elastic_mapping = 1
+        root['document'] = document
+        assert root['document'].name == 'document'
+
+        adapter = BaseElasticKottiContent(document)
+        assert adapter.elastic_mapping() == 1
