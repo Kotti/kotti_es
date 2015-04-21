@@ -117,3 +117,16 @@ class TestUtil(TestCase):
         self.assertFalse('span' in filtered)
         self.assertFalse('script' in filtered)
         self.assertFalse('xyz' in filtered)
+
+    def test_search(self):
+        from kotti_es.util import es_search_content
+        import mock
+
+        with mock.patch('kotti_es.util.get_client') as get_client:
+            es = mock.Mock()
+            es.search = lambda *args, **kwargs: {'hits': {'hits': []}}
+            client = mock.Mock()
+            client.es = es
+            get_client.return_value = client
+
+            assert es_search_content('pippo') == []
