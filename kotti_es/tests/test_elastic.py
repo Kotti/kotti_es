@@ -18,11 +18,11 @@ class TestDefaultKottiAdapter:
     def test_verify_document(self, root):
         from kotti.resources import Document
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
-        root['document'] = document
-        assert root['document'].name == 'document'
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
+        root[u'document'] = document
+        assert root[u'document'].name == u'document'
 
         adapter = BaseElasticKottiContent(document)
         assert adapter.elastic_document_type() == document.type_info.name
@@ -31,11 +31,11 @@ class TestDefaultKottiAdapter:
     def test_verify_document_default_mapping(self, root):
         from kotti.resources import Document
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
-        root['document'] = document
-        assert root['document'].name == 'document'
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
+        root[u'document'] = document
+        assert root[u'document'].name == u'document'
 
         adapter = BaseElasticKottiContent(document)
         elastic_mapping = adapter.elastic_mapping()
@@ -50,11 +50,11 @@ class TestDefaultKottiAdapter:
     def test_verify_document_default_mapping_attrs(self, root):
         from kotti.resources import Document
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
-        root['document'] = document
-        assert root['document'].name == 'document'
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
+        root[u'document'] = document
+        assert root[u'document'].name == u'document'
 
         adapter = BaseElasticKottiContent(document)
         elastic_mapping = adapter.elastic_mapping()
@@ -71,11 +71,11 @@ class TestDefaultKottiAdapter:
     def test_verify_document_default_mapping_attrs_methods(self, root):
         from kotti.resources import Document
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
-        root['document'] = document
-        assert root['document'].name == 'document'
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
+        root[u'document'] = document
+        assert root[u'document'].name == u'document'
 
         adapter = BaseElasticKottiContent(document)
 
@@ -89,12 +89,12 @@ class TestDefaultKottiAdapter:
     def test_verify_document_type_info_mapping(self, root):
         from kotti.resources import Document
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
         document.type_info.elastic_mapping = 1
-        root['document'] = document
-        assert root['document'].name == 'document'
+        root[u'document'] = document
+        assert root[u'document'].name == u'document'
 
         adapter = BaseElasticKottiContent(document)
         assert adapter.elastic_mapping() == 1
@@ -104,9 +104,9 @@ class TestDefaultKottiAdapter:
         from kotti.resources import Document
         from pyramid_es.interfaces import IElastic
         from kotti_es.elastic import BaseElasticKottiContent
-        document = Document(title='mytitle',
-                            description='mydescr',
-                            body='<span>hello</span>')
+        document = Document(title=u'mytitle',
+                            description=u'mydescr',
+                            body=u'<span>hello</span>')
         config.include('kotti_es')
         adapter = config.registry.queryAdapter(document, IElastic)
         assert adapter is not None
