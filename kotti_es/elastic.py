@@ -74,7 +74,7 @@ class BaseElasticKottiContent(ElasticBase):
 
     @property
     def _description(self):
-        return self.context.title
+        return self.context.description
 
     @property
     def _body(self):
