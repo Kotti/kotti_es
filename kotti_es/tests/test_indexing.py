@@ -17,7 +17,7 @@ class TestIndexing:
         assert _type == 'Document'
         assert results['hits']['hits'][0]['_source']['path'] == '/mydoc'
 
-    def test_insert_metadata(self, config, root, dummy_request):
+    def test_insert_searches(self, config, root, dummy_request):
         import transaction
         config.include('kotti_es')
         from kotti.resources import Document
@@ -32,6 +32,7 @@ class TestIndexing:
 
         assert len(client.es.search(q='title')['hits']['hits']) == 1
         assert len(client.es.search(q='description')['hits']['hits']) == 1
-#        assert len(client.es.search(q='body')['hits']['hits']) == 1
+        # TODO: test failure, ok if you put a pdb
+        # assert len(client.es.search(q='body')['hits']['hits']) == 1
         assert len(client.es.search(q='mydoc')['hits']['hits']) == 1
         assert len(client.es.search(q='span')['hits']['hits']) == 0
