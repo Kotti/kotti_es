@@ -98,3 +98,15 @@ class TestDefaultKottiAdapter:
 
         adapter = BaseElasticKottiContent(document)
         assert adapter.elastic_mapping() == 1
+
+    def test_component_lookup(self, config, root):
+        from kotti.resources import Document
+        from pyramid_es.interfaces import IElastic
+        from kotti_es.elastic import BaseElasticKottiContent
+        document = Document(title='mytitle',
+                            description='mydescr',
+                            body='<span>hello</span>')
+        config.include('kotti_es')
+        adapter = config.registry.queryAdapter(document, IElastic)
+        assert adapter is not None
+        assert isinstance(adapter, BaseElasticKottiContent)

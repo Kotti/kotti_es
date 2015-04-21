@@ -13,5 +13,6 @@ pytest_plugins = "kotti"
 @fixture(scope='session')
 def custom_settings():
     return {
+        'elastic.index': 'kotti_es_test',
         'kotti.configurators': 'kotti_tinymce.kotti_configure '
                                'kotti_es.kotti_configure'}
