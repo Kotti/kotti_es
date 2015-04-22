@@ -1,10 +1,15 @@
 import sqlalchemy
-from sqlalchemy.orm import mapper
+from sqlalchemy.orm import (
+    scoped_session,
+    sessionmaker,
+    mapper,
+    )
 from pyramid.threadlocal import (
     get_current_request,
     )
 
 from elasticsearch.exceptions import NotFoundError
+from kotti.resources import Content
 from pyramid_es import get_client
 
 from kotti import DBSession
@@ -24,7 +29,10 @@ def _after_insert_update(mapper, connection, target):
     if not is_blacklisted(target):
         request = get_request(target)
         if request:
-            request._index_list = [(target, INSERT_CODE)]
+            if not hasattr(request, '_index_list'):
+                request._index_list = [(target, INSERT_CODE)]
+            else:
+                request._index_list.append((target, INSERT_CODE))
 
 
 def _after_delete(mapper, connection, target):
@@ -43,6 +51,12 @@ def _after_commit(session):
         index_list = getattr(request, '_index_list', [])
         es_client = get_client(request)
         for target, operation in index_list:
+            target_id = target.id
+            try:
+                target.name
+            except sqlalchemy.exc.InvalidRequestError:
+                session = scoped_session(sessionmaker())
+                target = session.query(Content).filter_by(id=target_id).first()
             if operation == INSERT_CODE:
                 es_client.index_object(target, immediate=True)
             elif operation == DELETE_CODE:
