@@ -55,6 +55,13 @@ def _after_commit(session):
             try:
                 target.name
             except sqlalchemy.exc.InvalidRequestError:
+                # if you call the @@rename view and you
+                # try to change name, you'll get an error
+                # because the session is no more usable.
+                # Possible improvements:
+                # * find another way to detect if the session is usable or not
+                # * do not initialize a new session for each cycle items
+                # TODO: code review and refactor needed
                 session = scoped_session(sessionmaker())
                 target = session.query(Content).filter_by(id=target_id).first()
             if operation == INSERT_CODE:
