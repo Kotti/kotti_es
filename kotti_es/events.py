@@ -98,7 +98,7 @@ def default_index_action(session, request):
                 target = get_target_by_id(session, target_id)
                 update_target(session, es_client, target, operation)
             if new_session:
-                session.close()
+                session.remove()
 
 
 def wire_sqlalchemy():  # pragma: no cover
