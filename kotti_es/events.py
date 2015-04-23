@@ -10,9 +10,9 @@ from pyramid.threadlocal import (
 from pyramid.util import DottedNameResolver
 
 from elasticsearch.exceptions import NotFoundError
-from kotti.resources import Content
 from pyramid_es import get_client
 
+from kotti.resources import Content
 from kotti import (
     DBSession,
     get_settings,
