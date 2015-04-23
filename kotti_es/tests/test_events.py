@@ -13,37 +13,40 @@ class TestEvents:
     def test_after_insert(self, dummy_request):
         from kotti.resources import Document
         document = Document()
+        document.id = 1
         document.request = dummy_request
         assert hasattr(document.request, '_index_list') is False
         from kotti_es.events import _after_insert_update
         from kotti_es.events import INSERT_CODE
         _after_insert_update(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document, INSERT_CODE)
+            (document.id, INSERT_CODE)
             ]
 
     def test_after_delete(self, dummy_request):
         from kotti.resources import Document
         document = Document()
+        document.id = 1
         document.request = dummy_request
         assert hasattr(document.request, '_index_list') is False
         from kotti_es.events import _after_delete
         from kotti_es.events import DELETE_CODE
         _after_delete(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document, DELETE_CODE)
+            (document.id, DELETE_CODE)
             ]
 
     def test_after_delete2(self, dummy_request):
         from kotti.resources import Document
         document = Document()
+        document.id = 1
         document.request = dummy_request
         document.request._index_list = []
         from kotti_es.events import _after_delete
         from kotti_es.events import DELETE_CODE
         _after_delete(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document, DELETE_CODE)
+            (document.id, DELETE_CODE)
             ]
 
     def test_after_delete3(self, dummy_request):
@@ -73,8 +76,13 @@ class TestEvents:
                     get_client:
                 magic = mock.MagicMock()
                 get_client.return_value = magic
-                _after_commit(None)
-                magic.index_object.assert_called_with(document, immediate=True)
+                session = mock.Mock()
+                session.configure_mock(**{
+                    'query.return_value.filter_by.'
+                    'return_value.one.return_value': document})
+                _after_commit(session)
+                magic.index_object.assert_called_with(document,
+                                                      immediate=True)
 
     def test_after_commit_delete(self, dummy_request):
         from kotti.resources import Document
@@ -92,6 +100,10 @@ class TestEvents:
                     get_client:
                 magic = mock.MagicMock()
                 get_client.return_value = magic
-                _after_commit(None)
+                session = mock.Mock()
+                session.configure_mock(**{
+                    'query.return_value.filter_by.'
+                    'return_value.one.return_value': document})
+                _after_commit(session)
                 magic.delete_object.assert_called_with(document,
                                                        immediate=True)
