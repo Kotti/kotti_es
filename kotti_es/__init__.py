@@ -20,6 +20,8 @@ def kotti_configure(settings):
     """
 
     settings['pyramid.includes'] += ' kotti_es'
+    if 'kotti_es.index_action' not in settings:
+        settings['kotti_es.index_action'] = 'kotti_es.events.default_index_action'
 
 
 def includeme(config):

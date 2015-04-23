@@ -7,12 +7,16 @@ from sqlalchemy.orm import (
 from pyramid.threadlocal import (
     get_current_request,
     )
+from pyramid.util import DottedNameResolver
 
 from elasticsearch.exceptions import NotFoundError
 from kotti.resources import Content
 from pyramid_es import get_client
 
-from kotti import DBSession
+from kotti import (
+    DBSession,
+    get_settings,
+    )
 
 from .util import (
     is_blacklisted,
@@ -49,8 +53,13 @@ def _after_delete(mapper, connection, target):
 
 def _after_commit(session):
     request = get_current_request()
+    settings = get_settings()
+    index_action_dotted = settings['kotti_es.index_action']
+    index_action = DottedNameResolver(None).resolve(
+        index_action_dotted
+        )
     if request:
-        default_index_action(session, request)
+        index_action(session, request)
 
 
 def default_index_action(session, request):
