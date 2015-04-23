@@ -38,3 +38,8 @@ Just clone its `Github repository`_ and submit your contributions as pull reques
 
 .. _tracker: https://github.com/truelab/kotti_es/issues
 .. _Github repository: https://github.com/truelab/kotti_es
+
+Authors
+=======
+
+* Davide Moro (@davidemoro)
