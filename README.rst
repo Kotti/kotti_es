@@ -48,4 +48,4 @@ Just clone its `Github repository`_ and submit your contributions as pull reques
 Authors
 =======
 
-* Davide Moro ([@davidemoro](https://github.com/davidemoro))
+* Davide Moro (https://github.com/davidemoro)
