@@ -27,6 +27,10 @@ To enable the extension in your Kotti site, activate the configurator::
     elastic.index = mip_project
     elastic.servers = localhost:9200
     elastic.ensure_index_on_start = 1
+    kotti_es.blacklist =
+        File
+        Image
+        ...
 
     kotti.search_content = kotti_es.util.es_search_content
 
