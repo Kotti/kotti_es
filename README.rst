@@ -31,6 +31,8 @@ To enable the extension in your Kotti site, activate the configurator::
         File
         Image
         ...
+    # Optional: you can configure a different index_action
+    # kotti_es.index_action = yourcustom.indeaction
 
     kotti.search_content = kotti_es.util.es_search_content
 
