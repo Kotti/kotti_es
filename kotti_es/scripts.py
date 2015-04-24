@@ -3,6 +3,11 @@ import sys
 import textwrap
 
 from pyramid.paster import bootstrap
+from pyramid.threadlocal import get_current_request
+from kotti.resources import Content
+
+from pyramid_es import get_client
+from .util import is_blacklisted
 
 
 def reindex_es():
@@ -44,6 +49,8 @@ def reindex_es():
 
 def _reindex_es():
     # TODO
-    import pdb
-    pdb.set_trace()
-    pass
+    request = get_current_request()
+    es_client = get_client(request)
+    for obj in Content.query.all():
+        if not is_blacklisted(obj):
+            es_client.index_object(obj, immediate=True)
