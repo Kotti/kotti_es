@@ -4,6 +4,7 @@ import textwrap
 
 from pyramid.paster import bootstrap
 from pyramid.threadlocal import get_current_request
+from pyramid.traversal import resource_path
 from kotti.resources import Content
 
 from pyramid_es import get_client
@@ -32,6 +33,7 @@ def reindex_es():
     options, args = parser.parse_args(sys.argv)
 
     if options.config_uri:
+        print "Boostrap..."
         try:
             env = bootstrap(options.config_uri)
         except Exception, e:
@@ -40,6 +42,7 @@ def reindex_es():
             # no exceptions, env initialized
             try:
                 _reindex_es()
+
             finally:
                 # called env closer
                 env['closer']()
@@ -48,9 +51,15 @@ def reindex_es():
 
 
 def _reindex_es():
-    # TODO
+    print "Start reindex"
     request = get_current_request()
     es_client = get_client(request)
     for obj in Content.query.all():
         if not is_blacklisted(obj):
+            print "OK. Type: %s. Path: %s" % (obj.type_info.name,
+                                              resource_path(obj))
             es_client.index_object(obj, immediate=True)
+        else:
+            print "BLACKLISTED. Type: %s. Path: %s" % (obj.type_info.name,
+                                                       resource_path(obj))
+    print "End reindex"
