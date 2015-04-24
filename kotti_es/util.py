@@ -64,10 +64,8 @@ def html_to_text(value, cleaner=_cleaner):
 
 def es_search_content(search_term, request=None):
     """ ES search content """
-    # quick and dirty implementation, to be refactored and tested!
     if not request:
         request = get_current_request()
     client = get_client(request)
     results = client.es.search(client.index, q=search_term)['hits']['hits']
-    # TODO: index permission principals/localroles/ACL
-    return results
+    return [item['_source'] for item in results]
