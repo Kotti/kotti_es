@@ -50,6 +50,9 @@ setup(
     tests_require=[],
     dependency_links=[],
     entry_points={
+        'console_scripts': [
+            'reindex_es = kotti_es.scripts:reindex_es'
+        ],
     },
     extras_require={},
 )
