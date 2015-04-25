@@ -10,10 +10,10 @@ It is based on a `pyramid_es` fork (there is a pending PR) and it should be cons
 
 `Find out more about Kotti`_
 
-Development happens at https://github.com/davidemoro/kotti_es
+Development happens at https://github.com/truelab/kotti_es
 
 .. |build status| image:: https://secure.travis-ci.org/truelab/kotti_es.png?branch=master
-.. _build status: http://travis-ci.org/davidemoro/kotti_es
+.. _build status: http://travis-ci.org/truelab/kotti_es
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 
 Setup
