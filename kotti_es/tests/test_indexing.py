@@ -22,6 +22,7 @@ class TestIndexing:
         document.request = dummy_request
         root[u'mydoc'] = document
         # with body=None no exceptions should be raised (utils/html_to_text)
+        db_session.flush()
         transaction.commit()
 
         es_client.flush()
