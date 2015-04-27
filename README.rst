@@ -36,6 +36,11 @@ To enable the extension in your Kotti site, activate the configurator::
 
     kotti.search_content = kotti_es.util.es_search_content
 
+
+You can add ``kotti_es`` to an existing Kotti site and launch the ``reindex_es`` console script::
+
+    $ reindex_es -c app.ini
+
 Development
 ===========
 
