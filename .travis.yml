@@ -18,7 +18,7 @@ install:
   - travis_retry pip install psycopg2 oursql python-coveralls MySQL-python
 before_script:
   - psql -c 'create database kotti_testing;' -U postgres
-  - mysql -e 'create database kotti_testing;'
+  - mysql -e 'create database kotti_testing;' -u root
   - sleep 10     # needed for ES
 script:
   - py.test --tb=native --cov=kotti --cov-report=term-missing
