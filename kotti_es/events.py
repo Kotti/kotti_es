@@ -86,7 +86,7 @@ def default_index_action(session, request):
             try:
                 update_target(session, es_client, target, operation)
             except sqlalchemy.exc.InvalidRequestError:
-                # because the session could be no more usable.
+                # the session could be no more usable
                 new_session = True
                 session = scoped_session(sessionmaker())
                 target = get_target_by_id(session, target_id)
@@ -99,7 +99,7 @@ def default_index_action(session, request):
                 except sqlalchemy.exc.InvalidRequestError:
                     session = scoped_session(sessionmaker())
                     target = get_target_by_id(session, target_id)
-                    if target:
+                    if target is not None:
                         update_target(session, es_client, target, operation)
             if new_session:
                 session.remove()
