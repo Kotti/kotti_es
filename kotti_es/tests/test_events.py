@@ -20,7 +20,7 @@ class TestEvents:
         from kotti_es.events import INSERT_CODE
         _after_insert_update(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document.id, INSERT_CODE)
+            (document, document.id, INSERT_CODE)
             ]
 
     def test_after_delete(self, dummy_request):
@@ -33,7 +33,7 @@ class TestEvents:
         from kotti_es.events import DELETE_CODE
         _after_delete(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document.id, DELETE_CODE)
+            (document, document.id, DELETE_CODE)
             ]
 
     def test_after_delete2(self, dummy_request):
@@ -46,7 +46,7 @@ class TestEvents:
         from kotti_es.events import DELETE_CODE
         _after_delete(None, None, document)
         assert getattr(document.request, '_index_list') == [
-            (document.id, DELETE_CODE)
+            (document, document.id, DELETE_CODE)
             ]
 
     def test_after_delete3(self, dummy_request):

@@ -35,9 +35,9 @@ def _after_insert_update(mapper, connection, target):
         if request:
             target_id = target.id
             if not hasattr(request, '_index_list'):
-                request._index_list = [(target_id, INSERT_CODE)]
+                request._index_list = [(target, target_id, INSERT_CODE)]
             else:
-                request._index_list.append((target_id, INSERT_CODE))
+                request._index_list.append((target, target_id, INSERT_CODE))
 
 
 def _after_delete(mapper, connection, target):
@@ -46,9 +46,9 @@ def _after_delete(mapper, connection, target):
         if request:
             target_id = target.id
             if not hasattr(request, '_index_list'):
-                request._index_list = [(target_id, DELETE_CODE)]
+                request._index_list = [(target, target_id, DELETE_CODE)]
             else:
-                request._index_list.append((target_id, DELETE_CODE))
+                request._index_list.append((target, target_id, DELETE_CODE))
 
 
 def _after_commit(session):
@@ -64,10 +64,9 @@ def _after_commit(session):
 
 def default_index_action(session, request):
     def get_target_by_id(session, target_id):
-        return session.query(Content).filter_by(id=target_id).one()
+        return session.query(Content).filter_by(id=target_id).first()
 
     def update_target(session, es_client, target, operation):
-        target = session.query(Content).filter_by(id=target.id).one()
         if operation == INSERT_CODE:
             es_client.index_object(target, immediate=True)
         elif operation == DELETE_CODE:
@@ -81,22 +80,27 @@ def default_index_action(session, request):
         if index_list:
             new_session = False
             es_client = get_client(request)
-            target_id = index_list[0][0]
-            operation = index_list[0][1]
+            target = index_list[0][0]
+            target_id = index_list[0][1]
+            operation = index_list[0][2]
             try:
-                target = get_target_by_id(session, target_id)
+                update_target(session, es_client, target, operation)
             except sqlalchemy.exc.InvalidRequestError:
-                # if you call the @@rename view and you
-                # try to change name, you'll get an error
-                # because the session is no more usable.
-                # Code review will be very appreciated
+                # because the session could be no more usable.
                 new_session = True
                 session = scoped_session(sessionmaker())
                 target = get_target_by_id(session, target_id)
-            update_target(session, es_client, target, operation)
-            for target_id, operation in index_list[1:]:
-                target = get_target_by_id(session, target_id)
-                update_target(session, es_client, target, operation)
+                if target:
+                    update_target(session, es_client, target, operation)
+
+            for target, target_id, operation in index_list[1:]:
+                try:
+                    update_target(session, es_client, target, operation)
+                except sqlalchemy.exc.InvalidRequestError:
+                    session = scoped_session(sessionmaker())
+                    target = get_target_by_id(session, target_id)
+                    if target:
+                        update_target(session, es_client, target, operation)
             if new_session:
                 session.remove()
 
