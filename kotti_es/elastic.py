@@ -49,6 +49,8 @@ class BaseElasticKottiContent(ElasticBase):
                     ESString('body', attr='_body', filter=html_to_text),
                     ESField('path', attr='_path'),
                     ESField('name', attr='_name'),
+                    ESField('language', attr='_language'),
+                    ESField('state', attr='_state'),
                     ))
 
     def elastic_document_type(self):
@@ -88,3 +90,11 @@ class BaseElasticKottiContent(ElasticBase):
     @property
     def _name(self):
         return self.context.name
+
+    @property
+    def _language(self):
+        return self.context.language
+
+    @property
+    def _state(self):
+        return self.context.state
