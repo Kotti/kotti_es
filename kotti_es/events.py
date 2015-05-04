@@ -1,9 +1,6 @@
 import sqlalchemy
-from sqlalchemy.orm import (
-    scoped_session,
-    sessionmaker,
-    mapper,
-    )
+from sqlalchemy.orm import mapper
+
 from pyramid.threadlocal import (
     get_current_request,
     )
@@ -22,6 +19,8 @@ from .util import (
     is_blacklisted,
     get_request,
     )
+
+from . import ESSession
 
 _WIRED_SQLALCHEMY = False
 
@@ -59,7 +58,7 @@ def _after_commit(session):
         index_action_dotted
         )
     if request:
-        index_action(session, request)
+        index_action(ESSession, request)
 
 
 def default_index_action(session, request):
@@ -78,31 +77,9 @@ def default_index_action(session, request):
     if request:
         index_list = getattr(request, '_index_list', [])
         if index_list:
-            new_session = False
             es_client = get_client(request)
-            target = index_list[0][0]
-            target_id = index_list[0][1]
-            operation = index_list[0][2]
-            try:
+            for target, target_id, operation in index_list:
                 update_target(session, es_client, target, operation)
-            except sqlalchemy.exc.InvalidRequestError:
-                # the session could be no more usable
-                new_session = True
-                session = scoped_session(sessionmaker())
-                target = get_target_by_id(session, target_id)
-                if target:
-                    update_target(session, es_client, target, operation)
-
-            for target, target_id, operation in index_list[1:]:
-                try:
-                    update_target(session, es_client, target, operation)
-                except sqlalchemy.exc.InvalidRequestError:
-                    session = scoped_session(sessionmaker())
-                    target = get_target_by_id(session, target_id)
-                    if target is not None:
-                        update_target(session, es_client, target, operation)
-            if new_session:
-                session.remove()
 
 
 def wire_sqlalchemy():  # pragma: no cover

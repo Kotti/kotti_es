@@ -4,7 +4,13 @@
 Created on 2015-04-08
 :author: Davide Moro (davide.moro@gmail.com)
 """
-from .events import wire_sqlalchemy
+
+from sqlalchemy.orm import (
+    scoped_session,
+    sessionmaker,
+    )
+
+ESSession = scoped_session(sessionmaker())
 
 
 def kotti_configure(settings):
@@ -37,6 +43,7 @@ def includeme(config):
     config.include('pyramid_zcml')
     config.load_zcml('configure.zcml')
 
+    from .events import wire_sqlalchemy
     wire_sqlalchemy()
 
     config.scan(__name__)
