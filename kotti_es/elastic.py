@@ -40,6 +40,9 @@ class BaseElasticKottiContent(ElasticBase):
         if elastic_mapping is not None:
             return elastic_mapping
         else:
+            # [TODO] To be discussed:
+            # * path: enable path_hierarchy?
+            # * body: do we need filtering html? ES should be able to do that
             return ESMapping(
                 analyzer='content',
                 properties=ESMapping(
@@ -47,15 +50,21 @@ class BaseElasticKottiContent(ElasticBase):
                     ESString('title', attr='_title'),
                     ESString('description', attr='_description'),
                     ESString('body', attr='_body', filter=html_to_text),
-                    ESField('path', attr='_path'),
-                    ESField('name', attr='_name'),
+                    ESField('path',
+                            attr='_path',
+                            index='not_analyzed',
+                            ),
+                    ESField('name',
+                            attr='_name',
+                            index='not_analyzed',
+                            ),
                     ESField('language',
                             attr='_language',
                             index='not_analyzed',
                             ),
                     ESField('state',
                             attr='_state',
-                            analyzer='lowercase',
+                            index='not_analyzed',
                             ),
                     ))
 
