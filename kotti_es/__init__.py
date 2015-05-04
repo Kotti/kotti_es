@@ -28,7 +28,7 @@ def kotti_configure(settings):
     settings['pyramid.includes'] += ' kotti_es'
     settings['kotti.search_content'] = 'kotti_es.util.es_search_content'
     if 'kotti_es.index_action' not in settings:
-        settings['kotti_es.index_action'] = 'kotti_es.events.default_index_action'
+        settings['kotti_es.index_action'] = 'kotti_es.sqla.default_index_action'
 
 
 def includeme(config):
