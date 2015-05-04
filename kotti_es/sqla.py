@@ -60,7 +60,10 @@ def _after_commit(session):
     if request:
         # use a global alternative session (the session bound to
         # this hook might be not usable)
-        index_action(request)
+        try:
+            index_action(request)
+        finally:
+            ESSession.remove()
 
 
 def default_index_action(request):
