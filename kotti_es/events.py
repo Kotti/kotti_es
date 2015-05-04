@@ -58,14 +58,16 @@ def _after_commit(session):
         index_action_dotted
         )
     if request:
-        index_action(ESSession, request)
+        # use a global alternative session (the session bound to
+        # this hook might be not usable)
+        index_action(request)
 
 
-def default_index_action(session, request):
-    def get_target_by_id(session, target_id):
-        return session.query(Content).filter_by(id=target_id).first()
+def default_index_action(request):
+    def get_target_by_id(target_id):
+        return ESSession.query(Content).filter_by(id=target_id).first()
 
-    def update_target(session, es_client, target, operation):
+    def update_target(es_client, target, operation):
         if operation == INSERT_CODE:
             es_client.index_object(target, immediate=True)
         elif operation == DELETE_CODE:
@@ -79,7 +81,7 @@ def default_index_action(session, request):
         if index_list:
             es_client = get_client(request)
             for target, target_id, operation in index_list:
-                update_target(session, es_client, target, operation)
+                update_target(es_client, target, operation)
 
 
 def wire_sqlalchemy():  # pragma: no cover
