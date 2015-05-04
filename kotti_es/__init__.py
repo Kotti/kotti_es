@@ -9,6 +9,7 @@ from sqlalchemy.orm import (
     scoped_session,
     sessionmaker,
     )
+from pyramid.settings import asbool
 
 ESSession = scoped_session(sessionmaker())
 
@@ -26,7 +27,10 @@ def kotti_configure(settings):
     """
 
     settings['pyramid.includes'] += ' kotti_es'
-    settings['kotti.search_content'] = 'kotti_es.util.es_search_content'
+    override_search = asbool(settings.get('kotti_es.override_search_content',
+                             True))
+    if override_search:
+        settings['kotti.search_content'] = 'kotti_es.util.es_search_content'
     if 'kotti_es.index_action' not in settings:
         settings['kotti_es.index_action'] = 'kotti_es.sqla.default_index_action'
 
