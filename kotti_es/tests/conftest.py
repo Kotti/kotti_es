@@ -14,6 +14,6 @@ pytest_plugins = "kotti"
 def custom_settings():
     return {
         'elastic.index': 'kotti_es_test',
-        'kotti_es.index_action': 'kotti_es.events.default_index_action',
+        'kotti_es.index_action': 'kotti_es.sqla.default_index_action',
         'kotti.configurators': 'kotti_tinymce.kotti_configure '
                                'kotti_es.kotti_configure'}

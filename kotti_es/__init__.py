@@ -43,7 +43,7 @@ def includeme(config):
     config.include('pyramid_zcml')
     config.load_zcml('configure.zcml')
 
-    from .events import wire_sqlalchemy
+    from .sqla import wire_sqlalchemy
     wire_sqlalchemy()
 
     config.scan(__name__)
