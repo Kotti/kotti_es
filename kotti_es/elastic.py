@@ -2,7 +2,6 @@ from zope.interface import implements
 from zope.component import (
     adapts,
     )
-from pyramid.traversal import resource_path
 from kotti.interfaces import (
     IContent,
     )
@@ -100,7 +99,7 @@ class BaseElasticKottiContent(ElasticBase):
 
     @property
     def _path(self):
-        return resource_path(self.context)
+        return self.context.path
 
     @property
     def _name(self):
