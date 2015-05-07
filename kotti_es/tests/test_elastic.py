@@ -82,7 +82,7 @@ class TestDefaultKottiAdapter:
         assert adapter._title == document.title
         assert adapter._description == document.description
         assert adapter._body == document.body
-        assert adapter._path == '/document'
+        assert adapter._path == document.path
         assert adapter._name == document.name
         assert adapter._id == document.id
 

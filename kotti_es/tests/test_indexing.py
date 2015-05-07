@@ -28,7 +28,9 @@ class TestIndexing:
         results = es_client.es.search(q='mydescription')
         _type = results['hits']['hits'][0]['_type']
         assert _type == 'Document'
-        assert results['hits']['hits'][0]['_source']['path'] == '/mydoc'
+        from kotti.resources import get_root
+        root = get_root()
+        assert results['hits']['hits'][0]['_source']['path'] == root[u'mydoc'].path
 
 #        # we have to clean up, because we committed transactions
 #        del root[u'mydoc']
