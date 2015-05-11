@@ -12,7 +12,7 @@ and it should be considered still **experimental**, so use `kotti_es` at your ow
 
 Development happens at https://github.com/Kotti/kotti_es
 
-.. |build status| image:: https://secure.travis-ci.org/truelab/kotti_es.png?branch=master
+.. |build status| image:: https://secure.travis-ci.org/Kotti/kotti_es.png?branch=master
 .. _build status: http://travis-ci.org/Kotti/kotti_es
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 
