@@ -3,8 +3,8 @@ kotti_es
 
 \This is an extension to Kotti that allows to add `ElasticSearch` (https://www.elastic.co/products/elasticsearch)
 support to your site.
-It is based on a `pyramid_es` fork (there is a pending PR) and it should be considered still
-**experimental**, so use `kotti_es` at your own risk.
+It is based on a `pyramid_es` fork (there is a pending PR, code available here https://github.com/truelab/pyramid_es/tree/feature-wrapper)
+and it should be considered still **experimental**, so use `kotti_es` at your own risk.
 
 |build status|_
 
