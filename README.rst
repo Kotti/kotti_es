@@ -50,6 +50,13 @@ Just clone its `Github repository`_ and submit your contributions as pull reques
 .. _tracker: https://github.com/truelab/kotti_es/issues
 .. _Github repository: https://github.com/truelab/kotti_es
 
+Funding
+=======
+
+Developed with the support of:
+
+* MIP (International Business School of Politecnico di Milano) - http://www.mip.polimi.it
+
 Authors
 =======
 
