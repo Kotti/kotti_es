@@ -8,7 +8,8 @@ from pyramid.traversal import resource_path
 from kotti.resources import Content
 
 from pyramid_es import get_client
-from .util import is_blacklisted
+
+from .util import get_is_blacklisted
 
 
 def reindex_es():
@@ -51,6 +52,7 @@ def reindex_es():
 
 
 def _reindex_es():
+    is_blacklisted = get_is_blacklisted()
     print "Start reindex"
     request = get_current_request()
     es_client = get_client(request)

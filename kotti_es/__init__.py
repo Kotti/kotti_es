@@ -33,6 +33,8 @@ def kotti_configure(settings):
         settings['kotti.search_content'] = 'kotti_es.util.es_search_content'
     if 'kotti_es.index_action' not in settings:
         settings['kotti_es.index_action'] = 'kotti_es.sqla.default_index_action'
+    if 'kotti_es.is_blacklisted' not in settings:
+        settings['kotti_es.is_blacklisted'] = 'kotti_es.util.is_blacklisted'
 
 
 def includeme(config):

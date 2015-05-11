@@ -16,8 +16,8 @@ from kotti import (
     )
 
 from .util import (
-    is_blacklisted,
     get_request,
+    get_is_blacklisted,
     )
 
 from . import ESSession
@@ -29,6 +29,7 @@ DELETE_CODE = -1
 
 
 def _after_insert_update(mapper, connection, target):
+    is_blacklisted = get_is_blacklisted()
     if not is_blacklisted(target):
         request = get_request(target)
         if request:
@@ -40,6 +41,7 @@ def _after_insert_update(mapper, connection, target):
 
 
 def _after_delete(mapper, connection, target):
+    is_blacklisted = get_is_blacklisted()
     if not is_blacklisted(target):
         request = get_request(target)
         if request:

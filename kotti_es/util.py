@@ -6,8 +6,10 @@ from pyramid.threadlocal import (
     get_current_request,
     get_current_registry,
     )
+from pyramid.util import DottedNameResolver
 from pyramid_es import get_client
 from kotti.interfaces import IContent
+from kotti import get_settings
 
 
 def blacklist_from_settings(settings):
@@ -20,11 +22,25 @@ def blacklist_from_settings(settings):
     return blacklist
 
 
+def get_is_blacklisted():
+    """ Returns the is_blacklisted function or the default fallback """
+    settings = get_settings()
+    is_blacklisted_dotted = settings.get('kotti_es.is_blacklisted')
+    is_blacklisted = DottedNameResolver(None).resolve(is_blacklisted_dotted)
+    return is_blacklisted
+
+
 def is_blacklisted(target):
-    """ Avoid indexing resources depending on:
+    """ Default function for blacklisting object from indexing.
+        You can override this default policy registering
+        a ``kotti_es.is_blacklisted`` hook.
+
+        Avoid indexing resources depending on:
         * IContent
         * type name not listed in ``kotti_es.blacklist``
     """
+    is_blacklisted = True
+
     if IContent.providedBy(target):
         request = get_request(target)
         registry = getattr(request, 'registry', None)
@@ -33,8 +49,8 @@ def is_blacklisted(target):
         settings = registry.settings
         blacklist = blacklist_from_settings(settings)
         type_name = target.type_info.name
-        return type_name in blacklist
-    return True
+        is_blacklisted = type_name in blacklist
+    return is_blacklisted
 
 
 def get_request(target):
