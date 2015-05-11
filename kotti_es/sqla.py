@@ -67,6 +67,7 @@ def _after_commit(session):
 
 
 def default_index_action(request):
+    """ This is the default index_action """
     def get_target_by_id(target_id):
         return ESSession.query(Content).filter_by(id=target_id).first()
 
