@@ -46,10 +46,14 @@ def _after_delete(mapper, connection, target):
         request = get_request(target)
         if request:
             target_id = target.id
+            insert_value = (target, target_id, INSERT_CODE)
+            delete_value = (target, target_id, DELETE_CODE)
             if not hasattr(request, '_index_list'):
-                request._index_list = [(target, target_id, DELETE_CODE)]
+                request._index_list = [delete_value]
             else:
-                request._index_list.append((target, target_id, DELETE_CODE))
+                if insert_value in request._index_list:
+                    request._index_list.remove(insert_value)
+                request._index_list.append(delete_value)
 
 
 def _after_commit(session):
