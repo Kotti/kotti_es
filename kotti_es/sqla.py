@@ -5,6 +5,7 @@ from pyramid.threadlocal import (
     get_current_request,
     )
 from pyramid.util import DottedNameResolver
+from pyramid.settings import asbool
 
 from elasticsearch.exceptions import NotFoundError
 from pyramid_es import get_client
@@ -100,7 +101,10 @@ def wire_sqlalchemy():  # pragma: no cover
         return
     else:
         _WIRED_SQLALCHEMY = True
-    sqlalchemy.event.listen(mapper, 'after_insert', _after_insert_update)
-    sqlalchemy.event.listen(mapper, 'after_update', _after_insert_update)
-    sqlalchemy.event.listen(mapper, 'after_delete', _after_delete)
-    sqlalchemy.event.listen(DBSession, 'after_commit', _after_commit)
+
+    settings = get_settings()
+    if not asbool(settings.get('kotti_es.disable_indexing', False)):
+        sqlalchemy.event.listen(mapper, 'after_insert', _after_insert_update)
+        sqlalchemy.event.listen(mapper, 'after_update', _after_insert_update)
+        sqlalchemy.event.listen(mapper, 'after_delete', _after_delete)
+        sqlalchemy.event.listen(DBSession, 'after_commit', _after_commit)

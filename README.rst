@@ -71,6 +71,9 @@ Optional settings::
     # If you want you can configure a different index action and maybe implement an asynchronous indexing handler
     # kotti_es.index_action = yourcustom.indexaction
 
+    # **kotti_es.disable_indexing**: you can disable ElasticSearch indexing (default: false)
+    kotti_es.disable_indexing = false
+
 
 You can add ``kotti_es`` to an existing Kotti site and launch the ``reindex_es`` console script::
 
