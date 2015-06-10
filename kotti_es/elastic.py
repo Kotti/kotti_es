@@ -23,10 +23,10 @@ class BaseElasticKottiContent(ElasticBase):
 
     def __init__(self, context):
         try:
-            context
+            context.title and context.name
         except InvalidRequestError:
-            self.context = ESSession.query(self.context.__class__).\
-                filter(self.context.__class__.id == self.context.id).scalar()
+            self.context = ESSession.query(context.__class__).\
+                filter(context.__class__.id == context.id).scalar()
             if self.context is None:
                 # just in case the object was deleted
                 self.context = context
