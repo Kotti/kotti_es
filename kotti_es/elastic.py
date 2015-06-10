@@ -1,3 +1,4 @@
+from sqlalchemy.exc import InvalidRequestError
 from zope.interface import implements
 from zope.component import (
     adapts,
@@ -12,12 +13,25 @@ from pyramid_es.mixin import (
     )
 from pyramid_es.elastic import ElasticBase
 from pyramid_es.interfaces import IElastic
+from . import ESSession
 from .util import html_to_text
 
 
 class BaseElasticKottiContent(ElasticBase):
     implements(IElastic)
     adapts(IContent)
+
+    def __init__(self, context):
+        try:
+            context
+        except InvalidRequestError:
+            self.context = ESSession.query(self.context.__class__).\
+                filter(self.context.__class__.id == self.context.id).scalar()
+            if self.context is None:
+                # just in case the object was deleted
+                self.context = context
+        else:
+            self.context = context
 
     def elastic_mapping(self):
         """
